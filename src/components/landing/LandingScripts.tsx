@@ -158,6 +158,9 @@ export function LandingScripts() {
       const hctx = heroCanvas.getContext('2d')!
       let hw: number, hh: number
 
+      // Clear any existing labels (prevents duplicates on React Strict Mode re-mount)
+      heroLabelsDiv.innerHTML = ''
+
       const resizeHero = () => {
         const rect = heroCanvas.parentElement!.getBoundingClientRect()
         heroCanvas.width = rect.width
@@ -213,6 +216,9 @@ export function LandingScripts() {
         label.className = `graph-label ${node.type === 'portfolio' ? 'yours' : ''} ${node.type === 'center' ? 'highlight' : ''}`
         label.textContent = node.id
         label.dataset.index = String(i)
+        // Set initial position so labels don't flash at 0,0
+        label.style.left = (node.x * hw) + 'px'
+        label.style.top = (node.y * hh - node.size - 14) + 'px'
         label.addEventListener('mouseenter', () => { hoveredNode = i })
         label.addEventListener('mouseleave', () => { hoveredNode = -1 })
         heroLabelsDiv.appendChild(label)
@@ -686,6 +692,11 @@ export function LandingScripts() {
       rafIds.forEach(id => cancelAnimationFrame(id))
       observers.forEach(obs => obs.disconnect())
       cleanups.forEach(fn => fn())
+      // Remove dynamically created DOM elements to prevent duplicates on re-mount
+      if (heroLabelsDiv) heroLabelsDiv.innerHTML = ''
+      if (rippleLabelsEl) rippleLabelsEl.innerHTML = ''
+      // Reset reveal animations so they can re-trigger on re-mount
+      document.querySelectorAll('.landing-page .revealed').forEach(el => el.classList.remove('revealed'))
     }
   }, [])
 
