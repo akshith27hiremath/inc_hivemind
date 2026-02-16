@@ -141,6 +141,22 @@ Your ISP uses CGNAT — your public IP rotates between requests. Authorized-netw
 
 ---
 
+## Environment Variables
+
+All env vars are documented in `.env.example` (single source of truth). Copy to `.env.local` for local dev.
+
+| Variable | Purpose | Local | Production | Sensitive? |
+|----------|---------|-------|------------|------------|
+| `DATABASE_URL` | PostgreSQL connection string | `.env.local` | Secret Manager | Yes |
+| `INSTANCE_UNIX_SOCKET` | Cloud SQL Unix socket path | Not set | `--set-env-vars` | No |
+| `SMTP_USER` | Google Workspace account for sending email | `.env.local` | `--set-env-vars` | No |
+| `SMTP_PASS` | Google App Password (16 chars) | `.env.local` | Secret Manager | Yes |
+| `SMTP_FROM` | Display name + alias for outbound mail | `.env.local` | `--set-env-vars` | No |
+
+**Convention**: Credentials go in Secret Manager (`--set-secrets`). Config goes in env vars (`--set-env-vars`). Both are set in `deploy.sh`.
+
+---
+
 ## Deployment Checklist
 
 1. `npm run build` — passes locally

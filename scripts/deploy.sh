@@ -31,8 +31,8 @@ gcloud run deploy "$SERVICE" \
   --cpu=1 \
   --service-account=hivemind-runner@hivemind-inc.iam.gserviceaccount.com \
   --add-cloudsql-instances=hivemind-inc:us-central1:hivemind-db \
-  --set-secrets=DATABASE_URL=DATABASE_URL:latest \
-  --set-env-vars=INSTANCE_UNIX_SOCKET=/cloudsql/hivemind-inc:us-central1:hivemind-db \
+  --set-secrets=DATABASE_URL=DATABASE_URL:latest,SMTP_PASS=SMTP_PASS:latest \
+  --set-env-vars=INSTANCE_UNIX_SOCKET=/cloudsql/hivemind-inc:us-central1:hivemind-db,SMTP_USER=akshith@hivemind.inc,SMTP_FROM='"Hivemind" <welcome@hivemind.inc>' \
   --allow-unauthenticated
 
 echo ""

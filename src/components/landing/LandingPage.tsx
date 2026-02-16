@@ -18,21 +18,7 @@ export function LandingPage() {
       <nav className="nav" id="nav">
         <div className="nav-inner">
           <a href="#" className="nav-logo">
-            <svg className="logo-icon" width="28" height="28" viewBox="0 0 28 28" fill="none">
-              <circle cx="14" cy="14" r="3" fill="currentColor" />
-              <circle cx="14" cy="4" r="2" fill="currentColor" opacity="0.6" />
-              <circle cx="23" cy="9" r="2" fill="currentColor" opacity="0.6" />
-              <circle cx="23" cy="19" r="2" fill="currentColor" opacity="0.6" />
-              <circle cx="14" cy="24" r="2" fill="currentColor" opacity="0.6" />
-              <circle cx="5" cy="19" r="2" fill="currentColor" opacity="0.6" />
-              <circle cx="5" cy="9" r="2" fill="currentColor" opacity="0.6" />
-              <line x1="14" y1="14" x2="14" y2="4" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
-              <line x1="14" y1="14" x2="23" y2="9" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
-              <line x1="14" y1="14" x2="23" y2="19" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
-              <line x1="14" y1="14" x2="14" y2="24" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
-              <line x1="14" y1="14" x2="5" y2="19" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
-              <line x1="14" y1="14" x2="5" y2="9" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
-            </svg>
+            <img src="/logo.jpeg" alt="" width={28} height={28} style={{ borderRadius: '50%' }} />
             <span>hivemind</span>
           </a>
           <div className="nav-links">
@@ -43,7 +29,7 @@ export function LandingPage() {
           </div>
           <div className="nav-right">
             <a href="#" className="nav-link-sign">Sign In</a>
-            <a href="#" className="btn btn-primary btn-nav">Get Early Access</a>
+            <a href="/waitlist" className="btn btn-primary btn-nav">Join Waitlist</a>
           </div>
         </div>
       </nav>
@@ -69,8 +55,8 @@ export function LandingPage() {
           </p>
 
           <div className="hero-actions" data-reveal="" data-delay="300">
-            <a href="#" className="btn btn-primary btn-large">
-              <span>Start Free — 3 Stocks</span>
+            <a href="/waitlist" className="btn btn-primary btn-large">
+              <span>Join Waitlist — Lock in 40% Off</span>
             </a>
             <a href="#ripple" className="btn btn-ghost btn-large">
               <span>See it in action</span>
@@ -79,14 +65,7 @@ export function LandingPage() {
           </div>
 
           <div className="hero-proof" data-reveal="" data-delay="400">
-            <div className="hero-avatars">
-              <div className="avatar" style={{ '--hue': '210' } as React.CSSProperties}>JK</div>
-              <div className="avatar" style={{ '--hue': '30' } as React.CSSProperties}>SR</div>
-              <div className="avatar" style={{ '--hue': '150' } as React.CSSProperties}>ML</div>
-              <div className="avatar" style={{ '--hue': '280' } as React.CSSProperties}>DP</div>
-              <div className="avatar avatar-more">+2.4k</div>
-            </div>
-            <span className="hero-proof-text">Join 2,400+ investors in early access</span>
+            <span className="hero-proof-text">Join investors already on the waitlist</span>
           </div>
         </div>
 
@@ -434,7 +413,7 @@ export function LandingPage() {
                 <li>1-hop relationship mapping</li>
                 <li>Basic news aggregation</li>
               </ul>
-              <a href="#" className="btn btn-ghost btn-full">Get Started Free</a>
+              <a href="/waitlist" className="btn btn-ghost btn-full">Join Waitlist</a>
               <div className="pricing-note">No credit card required</div>
             </div>
 
@@ -451,7 +430,7 @@ export function LandingPage() {
                 <li>Real-time alert triggers</li>
                 <li>Earnings impact forecasting</li>
               </ul>
-              <a href="#" className="btn btn-primary btn-full">Start 14-Day Trial</a>
+              <a href="/waitlist" className="btn btn-primary btn-full">Join Waitlist — Early Bird</a>
               <div className="pricing-note">Cancel anytime</div>
             </div>
 
@@ -466,7 +445,7 @@ export function LandingPage() {
                 <li>Export briefs to PDF</li>
                 <li>API access (coming soon)</li>
               </ul>
-              <a href="#" className="btn btn-ghost btn-full">Get Annual Plan</a>
+              <a href="/waitlist" className="btn btn-ghost btn-full">Join Waitlist</a>
               <div className="pricing-note">$228/yr — save $120</div>
             </div>
           </div>
@@ -484,8 +463,8 @@ export function LandingPage() {
             <div className="cta-graph-bg" id="cta-graph-bg" />
             <h2>Institutions have teams of analysts<br />connecting these dots.</h2>
             <p className="cta-sub"><em>You have Hivemind.</em></p>
-            <a href="#" className="btn btn-primary btn-large">Get Early Access — Free</a>
-            <p className="cta-note">Free tier forever. Upgrade when you&apos;re ready.</p>
+            <a href="/waitlist" className="btn btn-primary btn-large">Join the Waitlist</a>
+            <p className="cta-note">Early bird members get 40% off Pro — forever.</p>
           </div>
         </div>
       </section>
@@ -496,15 +475,7 @@ export function LandingPage() {
           <div className="footer-grid">
             <div className="footer-brand">
               <span className="nav-logo">
-                <svg className="logo-icon" width="24" height="24" viewBox="0 0 28 28" fill="none">
-                  <circle cx="14" cy="14" r="3" fill="currentColor" />
-                  <circle cx="14" cy="4" r="2" fill="currentColor" opacity="0.6" />
-                  <circle cx="23" cy="9" r="2" fill="currentColor" opacity="0.6" />
-                  <circle cx="23" cy="19" r="2" fill="currentColor" opacity="0.6" />
-                  <circle cx="14" cy="24" r="2" fill="currentColor" opacity="0.6" />
-                  <circle cx="5" cy="19" r="2" fill="currentColor" opacity="0.6" />
-                  <circle cx="5" cy="9" r="2" fill="currentColor" opacity="0.6" />
-                </svg>
+                <img src="/logo.jpeg" alt="" width={24} height={24} style={{ borderRadius: '50%' }} />
                 <span>hivemind</span>
               </span>
               <p>Portfolio intelligence for the individual investor. See the connections Wall Street sees.</p>

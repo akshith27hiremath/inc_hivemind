@@ -56,6 +56,10 @@ export const metadata: Metadata = {
   description:
     'Hivemind maps the hidden relationships between your holdings and the world\'s financial events. See the connections Wall Street sees.',
   keywords: ['portfolio intelligence', 'investment', 'stock analysis', 'supply chain', 'financial insights'],
+  icons: {
+    icon: '/logo.jpeg',
+    apple: '/logo.jpeg',
+  },
 }
 
 export default function RootLayout({
