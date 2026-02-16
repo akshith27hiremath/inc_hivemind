@@ -17,22 +17,32 @@ export function WaitlistForm() {
     const countEl = document.getElementById('wl-count')
     if (!countEl) return
 
+    let cancelled = false
+    let rafId: number
+
     fetch('/api/waitlist')
       .then(res => res.json())
       .then(data => {
+        if (cancelled) return
         const target = data.count || 0
         if (target === 0) { countEl.textContent = '0'; return }
         const duration = 1200
         const start = performance.now()
         const tick = (now: number) => {
+          if (cancelled) return
           const progress = Math.min((now - start) / duration, 1)
           const eased = 1 - Math.pow(1 - progress, 3)
           countEl.textContent = Math.floor(target * eased).toLocaleString()
-          if (progress < 1) requestAnimationFrame(tick)
+          if (progress < 1) rafId = requestAnimationFrame(tick)
         }
-        requestAnimationFrame(tick)
+        rafId = requestAnimationFrame(tick)
       })
-      .catch(() => { countEl.textContent = '0' })
+      .catch(() => { if (!cancelled) countEl.textContent = '0' })
+
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(rafId)
+    }
   }, [])
 
   // --- Cursor, particles, reveal animations ---
@@ -149,18 +159,22 @@ export function WaitlistForm() {
     document.querySelectorAll('.waitlist-page [data-reveal]').forEach(el => observer.observe(el))
 
     // Trigger reveal for elements already in viewport
+    const revealTimers: ReturnType<typeof setTimeout>[] = []
     document.querySelectorAll('.waitlist-page [data-reveal]').forEach(el => {
       if (el.getBoundingClientRect().top < window.innerHeight) {
         const delay = parseInt((el as HTMLElement).dataset.delay || '0')
-        setTimeout(() => el.classList.add('revealed'), delay)
+        revealTimers.push(setTimeout(() => el.classList.add('revealed'), delay))
       }
     })
 
     return () => {
       rafIds.forEach(id => cancelAnimationFrame(id))
+      revealTimers.forEach(id => clearTimeout(id))
       observer.disconnect()
       cleanupCursor?.()
       cleanupParticles?.()
+      // Reset reveal classes so they can re-trigger on strict mode re-mount
+      document.querySelectorAll('.waitlist-page .revealed').forEach(el => el.classList.remove('revealed'))
     }
   }, [])
 
