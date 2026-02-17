@@ -1,0 +1,936 @@
+/* ==========================================================================
+   HIVEMIND — Waitlist Page
+   Matches the cinematic bleeding-edge aesthetic of the main landing page
+   ========================================================================== */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg: #0a0a08;
+    --bg-warm: #0e0d0a;
+    --surface: #141310;
+    --surface-2: #1a1916;
+    --border: rgba(212, 175, 55, 0.08);
+    --border-hover: rgba(212, 175, 55, 0.2);
+    --text: #f0ece4;
+    --text-2: #b8b0a0;
+    --text-3: #7a7468;
+    --amber: #d4af37;
+    --amber-light: #e8c84a;
+    --amber-dim: #a68a2a;
+    --amber-glow: rgba(212, 175, 55, 0.15);
+    --amber-glow-strong: rgba(212, 175, 55, 0.3);
+    --red: #e05555;
+    --green: #5ab87a;
+    --font: 'Inter', -apple-system, sans-serif;
+    --serif: 'Instrument Serif', Georgia, serif;
+    --mono: 'JetBrains Mono', monospace;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-lg: 20px;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: thin;
+    scrollbar-color: var(--amber-dim) var(--bg);
+}
+
+body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    cursor: none;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--amber-dim); border-radius: 3px; }
+::selection { background: rgba(212, 175, 55, 0.3); color: #fff; }
+
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--font); cursor: none; border: none; background: none; color: inherit; }
+
+
+/* --------------------------------------------------------------------------
+   GRAIN
+   -------------------------------------------------------------------------- */
+.grain {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px;
+}
+
+
+/* --------------------------------------------------------------------------
+   CURSOR
+   -------------------------------------------------------------------------- */
+.cursor-dot {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--amber);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10001;
+    transform: translate(-50%, -50%);
+}
+
+.cursor-ring { display: none; }
+
+
+/* --------------------------------------------------------------------------
+   BACKGROUND CANVAS
+   -------------------------------------------------------------------------- */
+#bg-graph {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   REVEAL ANIMATION
+   -------------------------------------------------------------------------- */
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+
+[data-reveal].revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* --------------------------------------------------------------------------
+   NAV
+   -------------------------------------------------------------------------- */
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 16px 32px;
+    background: rgba(10, 10, 8, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+}
+
+.logo-icon {
+    color: var(--amber);
+}
+
+.nav-back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-3);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.nav-back:hover {
+    color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   MAIN LAYOUT — split pitch + form
+   -------------------------------------------------------------------------- */
+.waitlist-main {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 140px 32px 80px;
+    width: 100%;
+}
+
+
+/* --------------------------------------------------------------------------
+   PITCH — Left side
+   -------------------------------------------------------------------------- */
+.wl-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background: rgba(212, 175, 55, 0.06);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--amber);
+    margin-bottom: 28px;
+}
+
+.badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.wl-title {
+    font-size: clamp(36px, 4.5vw, 54px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    margin-bottom: 20px;
+}
+
+.wl-line {
+    display: block;
+}
+
+.wl-em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--amber);
+}
+
+.wl-desc {
+    font-size: 16px;
+    color: var(--text-2);
+    max-width: 460px;
+    line-height: 1.7;
+    margin-bottom: 36px;
+}
+
+/* Perks */
+.wl-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.perk {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.perk-icon {
+    color: var(--amber);
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.06);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.perk strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 1px;
+}
+
+.perk span {
+    font-size: 13px;
+    color: var(--text-3);
+}
+
+/* Social proof */
+.wl-proof {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.wl-avatars {
+    display: flex;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: hsl(var(--hue), 30%, 30%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text);
+    border: 2px solid var(--bg);
+    margin-left: -8px;
+    flex-shrink: 0;
+}
+
+.avatar:first-child {
+    margin-left: 0;
+}
+
+.avatar-more {
+    background: var(--surface-2);
+    font-size: 9px;
+    color: var(--text-3);
+    width: 36px;
+}
+
+.wl-proof-text {
+    font-size: 13px;
+    color: var(--text-3);
+}
+
+.wl-count {
+    font-family: var(--mono);
+    font-weight: 700;
+    color: var(--text-2);
+}
+
+
+/* --------------------------------------------------------------------------
+   FORM CARD — Right side
+   -------------------------------------------------------------------------- */
+.wl-form-wrap {
+    position: relative;
+}
+
+.wl-form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transition: border-color 0.3s;
+}
+
+.wl-form-card:hover {
+    border-color: var(--border-hover);
+}
+
+/* Subtle radial glow behind card */
+.wl-form-card::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
+    background: radial-gradient(ellipse at 50% 30%, rgba(212, 175, 55, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.wl-form-header {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 28px;
+}
+
+.wl-form-tag {
+    font-size: 10px;
+    font-family: var(--mono);
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 12px;
+}
+
+.wl-form-header h2 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 8px;
+}
+
+.wl-form-header h2 em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--amber);
+}
+
+.wl-form-header p {
+    font-size: 14px;
+    color: var(--text-3);
+}
+
+/* Form */
+.wl-form {
+    position: relative;
+    z-index: 1;
+}
+
+.wl-input-group {
+    margin-bottom: 16px;
+}
+
+.wl-input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-2);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+}
+
+.wl-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.wl-input-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--text-3);
+    pointer-events: none;
+    transition: color 0.2s;
+}
+
+.wl-input-wrap input {
+    width: 100%;
+    padding: 14px 16px 14px 42px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    caret-color: var(--amber);
+}
+
+.wl-input-wrap input::placeholder {
+    color: var(--text-3);
+}
+
+.wl-input-wrap input:focus {
+    border-color: var(--amber);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08), 0 0 20px rgba(212, 175, 55, 0.06);
+}
+
+.wl-input-wrap input:focus + .wl-input-icon,
+.wl-input-wrap input:focus ~ .wl-input-icon {
+    color: var(--amber);
+}
+
+/* Hack: the icon is before input in DOM, adjust the focus styling */
+.wl-input-wrap:focus-within .wl-input-icon {
+    color: var(--amber);
+}
+
+.wl-error {
+    display: block;
+    font-size: 12px;
+    color: var(--red);
+    margin-top: 6px;
+    min-height: 18px;
+    font-family: var(--mono);
+    font-weight: 500;
+}
+
+/* Submit button */
+.wl-submit {
+    width: 100%;
+    padding: 16px 24px;
+    background: var(--amber);
+    color: var(--bg);
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: none;
+    transition: all 0.3s var(--ease);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: -0.01em;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.wl-submit:hover {
+    background: var(--amber-light);
+    box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+    transform: translateY(-2px);
+}
+
+.wl-submit:active {
+    transform: translateY(0);
+}
+
+.wl-submit.loading .wl-submit-text {
+    opacity: 0;
+}
+
+.wl-submit.loading .wl-submit-loader {
+    opacity: 1;
+}
+
+.wl-submit-text {
+    transition: opacity 0.2s;
+}
+
+.wl-submit-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(10, 10, 8, 0.2);
+    border-top-color: var(--bg);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.2s;
+}
+
+@keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+.wl-terms {
+    font-size: 11px;
+    color: var(--text-3);
+    text-align: center;
+    margin-top: 14px;
+    line-height: 1.5;
+}
+
+/* Divider */
+.wl-form-decor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+    position: relative;
+    z-index: 1;
+}
+
+.wl-decor-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.wl-form-decor span {
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--text-3);
+    letter-spacing: 1px;
+}
+
+/* Learn more link */
+.wl-learn-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+    text-decoration: none;
+    transition: all 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.wl-learn-more:hover {
+    border-color: var(--border-hover);
+    color: var(--text);
+    background: rgba(212, 175, 55, 0.03);
+}
+
+.wl-learn-more svg {
+    transition: transform 0.3s var(--ease);
+}
+
+.wl-learn-more:hover svg {
+    transform: translateX(3px);
+}
+
+
+/* --------------------------------------------------------------------------
+   SUCCESS STATE
+   -------------------------------------------------------------------------- */
+.wl-success {
+    position: absolute;
+    inset: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 48px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.96);
+    transition: all 0.5s var(--ease);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+.wl-success.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.wl-success-icon {
+    color: var(--green);
+    margin-bottom: 20px;
+    animation: successPulse 0.6s var(--ease);
+}
+
+@keyframes successPulse {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.wl-success h2 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+}
+
+.wl-success p {
+    font-size: 14px;
+    color: var(--text-2);
+    max-width: 340px;
+    line-height: 1.65;
+    margin-bottom: 28px;
+}
+
+.wl-success p strong {
+    color: var(--amber);
+    font-weight: 700;
+}
+
+/* Email confirmation status */
+.wl-email-status {
+    margin-bottom: 20px;
+    font-size: 12px;
+    min-height: 24px;
+}
+
+.wl-email-sending {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-3);
+    font-family: var(--mono);
+    font-size: 11px;
+}
+
+.wl-mini-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid rgba(212, 175, 55, 0.2);
+    border-top-color: var(--amber);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+.wl-email-sent {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 11px;
+    animation: fadeInUp 0.4s var(--ease);
+}
+
+.wl-email-sent strong {
+    color: var(--green);
+}
+
+.wl-email-failed {
+    color: var(--text-3);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-style: italic;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.wl-success-pos {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 32px;
+    margin-bottom: 28px;
+    text-align: center;
+}
+
+.wl-pos-label {
+    font-size: 9px;
+    font-family: var(--mono);
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.wl-pos-num {
+    font-size: 32px;
+    font-weight: 800;
+    font-family: var(--mono);
+    color: var(--amber);
+    letter-spacing: -1px;
+}
+
+/* Share */
+.wl-success-share {
+    margin-bottom: 24px;
+}
+
+.wl-success-share > span {
+    display: block;
+    font-size: 11px;
+    color: var(--text-3);
+    font-family: var(--mono);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.wl-share-btns {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.wl-share-btn {
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text-2);
+    background: var(--surface);
+    cursor: none;
+    transition: all 0.3s;
+}
+
+.wl-share-btn:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: rgba(212, 175, 55, 0.04);
+}
+
+.wl-success-home {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-3);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.wl-success-home:hover {
+    color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   FOOTER
+   -------------------------------------------------------------------------- */
+.wl-footer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-3);
+}
+
+.wl-footer-links {
+    display: flex;
+    gap: 20px;
+}
+
+.wl-footer-links a {
+    color: var(--text-3);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.wl-footer-links a:hover {
+    color: var(--amber);
+}
+
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE — 1024px
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+    .waitlist-main {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        padding: 120px 24px 60px;
+    }
+
+    .wl-title {
+        font-size: clamp(30px, 5vw, 42px);
+    }
+
+    .wl-form-card {
+        max-width: 520px;
+    }
+}
+
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE — 768px (mobile)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    body {
+        cursor: auto;
+    }
+
+    .cursor-dot, .cursor-ring {
+        display: none;
+    }
+
+    .nav {
+        padding: 12px 16px;
+    }
+
+    .waitlist-main {
+        padding: 100px 16px 40px;
+        gap: 36px;
+    }
+
+    .wl-title {
+        font-size: 28px;
+    }
+
+    .wl-desc {
+        font-size: 14px;
+    }
+
+    .wl-form-card {
+        padding: 28px 20px;
+        border-radius: var(--radius);
+    }
+
+    .wl-form-header h2 {
+        font-size: 22px;
+    }
+
+    .wl-perks {
+        gap: 12px;
+        margin-bottom: 28px;
+    }
+
+    .perk-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .wl-success {
+        padding: 32px 20px;
+        border-radius: var(--radius);
+    }
+
+    .wl-pos-num {
+        font-size: 26px;
+    }
+
+    .wl-footer {
+        flex-direction: column;
+        gap: 8px;
+        padding: 16px;
+    }
+
+    /* Submit button cursor on mobile */
+    .wl-submit,
+    .wl-share-btn,
+    .wl-learn-more,
+    .wl-success-home,
+    .nav-back {
+        cursor: pointer;
+    }
+}
+
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
