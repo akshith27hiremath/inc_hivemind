@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 export function LandingScripts() {
   useEffect(() => {
     const isMobile = window.matchMedia('(max-width: 768px)').matches
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
     let mouseX = window.innerWidth / 2
     let mouseY = window.innerHeight / 2
 
@@ -15,14 +14,11 @@ export function LandingScripts() {
     const cleanups: (() => void)[] = []
 
     // ============================================
-    // 1. CURSOR
+    // 1. CURSOR (dot only — no ring)
     // ============================================
     const cursorDot = document.getElementById('cursor-dot')
-    const cursorRing = document.getElementById('cursor-ring')
-    let ringX = mouseX
-    let ringY = mouseY
 
-    if (!isMobile && cursorDot && cursorRing) {
+    if (!isMobile && cursorDot) {
       const onMouseMove = (e: MouseEvent) => {
         mouseX = e.clientX
         mouseY = e.clientY
@@ -31,31 +27,6 @@ export function LandingScripts() {
       }
       document.addEventListener('mousemove', onMouseMove)
       cleanups.push(() => document.removeEventListener('mousemove', onMouseMove))
-
-      const animRing = () => {
-        ringX = lerp(ringX, mouseX, 0.12)
-        ringY = lerp(ringY, mouseY, 0.12)
-        cursorRing.style.left = ringX + 'px'
-        cursorRing.style.top = ringY + 'px'
-        rafIds.push(requestAnimationFrame(animRing))
-      }
-      rafIds.push(requestAnimationFrame(animRing))
-
-      const hoverables = document.querySelectorAll('.landing-page a, .landing-page button')
-      const enterHandlers: Array<[Element, () => void]> = []
-      const leaveHandlers: Array<[Element, () => void]> = []
-      hoverables.forEach(el => {
-        const enter = () => cursorRing.classList.add('hover')
-        const leave = () => cursorRing.classList.remove('hover')
-        el.addEventListener('mouseenter', enter)
-        el.addEventListener('mouseleave', leave)
-        enterHandlers.push([el, enter])
-        leaveHandlers.push([el, leave])
-      })
-      cleanups.push(() => {
-        enterHandlers.forEach(([el, fn]) => el.removeEventListener('mouseenter', fn))
-        leaveHandlers.forEach(([el, fn]) => el.removeEventListener('mouseleave', fn))
-      })
     }
 
     // ============================================
@@ -82,6 +53,34 @@ export function LandingScripts() {
     cleanups.push(() => window.removeEventListener('scroll', onScroll))
     // Run once immediately
     onScroll()
+
+    // Hamburger menu
+    const hamburger = document.getElementById('nav-hamburger')
+    const mobileMenu = document.getElementById('mobile-menu')
+    if (hamburger && mobileMenu) {
+      const toggleMenu = () => {
+        hamburger.classList.toggle('active')
+        mobileMenu.classList.toggle('open')
+        document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : ''
+      }
+      hamburger.addEventListener('click', toggleMenu)
+      cleanups.push(() => hamburger.removeEventListener('click', toggleMenu))
+
+      const closeMenu = () => {
+        hamburger.classList.remove('active')
+        mobileMenu.classList.remove('open')
+        document.body.style.overflow = ''
+      }
+      const menuLinks = mobileMenu.querySelectorAll('a')
+      menuLinks.forEach(link => {
+        link.addEventListener('click', closeMenu)
+      })
+      cleanups.push(() => {
+        menuLinks.forEach(link => link.removeEventListener('click', closeMenu))
+        // Ensure body overflow is restored on cleanup
+        document.body.style.overflow = ''
+      })
+    }
 
     // ============================================
     // 4. BACKGROUND PARTICLE GRAPH
@@ -172,22 +171,23 @@ export function LandingScripts() {
       window.addEventListener('resize', resizeHero)
       cleanups.push(() => window.removeEventListener('resize', resizeHero))
 
+      const mobileGraph = isMobile
       const heroNodes = [
-        { id: 'Your Portfolio', x: 0.5, y: 0.45, size: 14, type: 'center', fixed: true, vx: 0, vy: 0, ox: 0.5, oy: 0.45 },
-        { id: 'TSLA', x: 0.28, y: 0.30, size: 10, type: 'portfolio', fixed: false, vx: 0, vy: 0, ox: 0.28, oy: 0.30 },
-        { id: 'NVDA', x: 0.72, y: 0.25, size: 10, type: 'portfolio', fixed: false, vx: 0, vy: 0, ox: 0.72, oy: 0.25 },
-        { id: 'AMZN', x: 0.65, y: 0.65, size: 10, type: 'portfolio', fixed: false, vx: 0, vy: 0, ox: 0.65, oy: 0.65 },
-        { id: 'AAPL', x: 0.30, y: 0.68, size: 10, type: 'portfolio', fixed: false, vx: 0, vy: 0, ox: 0.30, oy: 0.68 },
-        { id: 'TSMC', x: 0.88, y: 0.38, size: 7, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.88, oy: 0.38 },
-        { id: 'Panasonic', x: 0.12, y: 0.20, size: 6, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.12, oy: 0.20 },
-        { id: 'Foxconn', x: 0.15, y: 0.50, size: 6, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.15, oy: 0.50 },
-        { id: 'AWS', x: 0.82, y: 0.60, size: 7, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.82, oy: 0.60 },
-        { id: 'Fed Rates', x: 0.50, y: 0.10, size: 7, type: 'macro', fixed: false, vx: 0, vy: 0, ox: 0.50, oy: 0.10 },
-        { id: 'EU Regs', x: 0.85, y: 0.80, size: 6, type: 'macro', fixed: false, vx: 0, vy: 0, ox: 0.85, oy: 0.80 },
-        { id: 'China Policy', x: 0.15, y: 0.85, size: 6, type: 'macro', fixed: false, vx: 0, vy: 0, ox: 0.15, oy: 0.85 },
-        { id: 'Shipping', x: 0.40, y: 0.85, size: 5, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.40, oy: 0.85 },
-        { id: 'Lithium', x: 0.18, y: 0.38, size: 5, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.18, oy: 0.38 },
-        { id: 'AI Chips', x: 0.78, y: 0.15, size: 6, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.78, oy: 0.15 },
+        { id: 'Your Portfolio', x: 0.5, y: 0.45, size: mobileGraph ? 10 : 14, type: 'center', fixed: true, vx: 0, vy: 0, ox: 0.5, oy: 0.45 },
+        { id: 'TSLA', x: 0.25, y: 0.25, size: mobileGraph ? 7 : 10, type: 'portfolio', fixed: false, vx: 0, vy: 0, ox: 0.25, oy: 0.25 },
+        { id: 'NVDA', x: 0.75, y: 0.22, size: mobileGraph ? 7 : 10, type: 'portfolio', fixed: false, vx: 0, vy: 0, ox: 0.75, oy: 0.22 },
+        { id: 'AMZN', x: 0.68, y: 0.68, size: mobileGraph ? 7 : 10, type: 'portfolio', fixed: false, vx: 0, vy: 0, ox: 0.68, oy: 0.68 },
+        { id: 'AAPL', x: 0.28, y: 0.70, size: mobileGraph ? 7 : 10, type: 'portfolio', fixed: false, vx: 0, vy: 0, ox: 0.28, oy: 0.70 },
+        { id: 'TSMC', x: 0.90, y: 0.38, size: mobileGraph ? 5 : 7, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.90, oy: 0.38 },
+        { id: 'Panasonic', x: 0.10, y: 0.15, size: mobileGraph ? 4 : 6, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.10, oy: 0.15 },
+        { id: 'Foxconn', x: 0.10, y: 0.50, size: mobileGraph ? 4 : 6, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.10, oy: 0.50 },
+        { id: 'AWS', x: 0.85, y: 0.62, size: mobileGraph ? 5 : 7, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.85, oy: 0.62 },
+        { id: 'Fed Rates', x: 0.50, y: 0.08, size: mobileGraph ? 5 : 7, type: 'macro', fixed: false, vx: 0, vy: 0, ox: 0.50, oy: 0.08 },
+        { id: 'EU Regs', x: 0.88, y: 0.82, size: mobileGraph ? 4 : 6, type: 'macro', fixed: false, vx: 0, vy: 0, ox: 0.88, oy: 0.82 },
+        { id: 'China Policy', x: 0.12, y: 0.88, size: mobileGraph ? 4 : 6, type: 'macro', fixed: false, vx: 0, vy: 0, ox: 0.12, oy: 0.88 },
+        { id: 'Shipping', x: 0.42, y: 0.88, size: mobileGraph ? 3 : 5, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.42, oy: 0.88 },
+        { id: 'Lithium', x: 0.15, y: 0.38, size: mobileGraph ? 3 : 5, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.15, oy: 0.38 },
+        { id: 'AI Chips', x: 0.80, y: 0.12, size: mobileGraph ? 4 : 6, type: 'entity', fixed: false, vx: 0, vy: 0, ox: 0.80, oy: 0.12 },
       ]
 
       const heroEdges: [number, number][] = [
@@ -345,7 +345,7 @@ export function LandingScripts() {
       let rw: number, rh: number
 
       const resizeRipple = () => {
-        const rect = rippleCanvas.parentElement!.getBoundingClientRect()
+        const rect = rippleCanvas.getBoundingClientRect()
         rippleCanvas.width = rect.width
         rippleCanvas.height = rect.height
         rw = rippleCanvas.width
@@ -363,19 +363,20 @@ export function LandingScripts() {
         info: { title: string; desc: string; path: string[] }
       }
 
+      const mob = isMobile
       const scenarios: Scenario[] = [
         {
           title: 'Musk leaves Tesla',
           nodes: [
-            { id: 'Musk Exits TSLA', x: 0.15, y: 0.35, type: 'event', hop: 0 },
-            { id: 'TSLA', x: 0.32, y: 0.25, type: 'direct', hop: 1, portfolio: true },
-            { id: 'TSLA Stock -18%', x: 0.32, y: 0.50, type: 'impact', hop: 1 },
-            { id: 'Panasonic (supplier)', x: 0.50, y: 0.15, type: 'supplier', hop: 2 },
-            { id: 'CATL Battery', x: 0.50, y: 0.45, type: 'supplier', hop: 2 },
-            { id: 'SpaceX contracts', x: 0.50, y: 0.70, type: 'related', hop: 2 },
-            { id: 'Maersk Shipping', x: 0.70, y: 0.25, type: 'indirect', hop: 3, portfolio: true },
-            { id: 'BHP Lithium', x: 0.70, y: 0.50, type: 'indirect', hop: 3 },
-            { id: 'Your: $SHIP', x: 0.85, y: 0.35, type: 'you', hop: 3, portfolio: true },
+            { id: mob ? 'Musk Exit' : 'Musk Exits TSLA', x: 0.13, y: 0.30, type: 'event', hop: 0 },
+            { id: 'TSLA', x: 0.32, y: 0.15, type: 'direct', hop: 1, portfolio: true },
+            { id: mob ? 'TSLA -18%' : 'TSLA Stock -18%', x: 0.32, y: 0.50, type: 'impact', hop: 1 },
+            { id: mob ? 'Panasonic' : 'Panasonic (supplier)', x: 0.52, y: 0.10, type: 'supplier', hop: 2 },
+            { id: 'CATL Battery', x: 0.52, y: 0.42, type: 'supplier', hop: 2 },
+            { id: mob ? 'SpaceX' : 'SpaceX contracts', x: 0.52, y: 0.72, type: 'related', hop: 2 },
+            { id: mob ? 'Maersk' : 'Maersk Shipping', x: 0.73, y: 0.20, type: 'indirect', hop: 3, portfolio: true },
+            { id: mob ? 'BHP' : 'BHP Lithium', x: 0.73, y: 0.52, type: 'indirect', hop: 3 },
+            { id: 'Your: $SHIP', x: 0.88, y: 0.35, type: 'you', hop: 3, portfolio: true },
           ],
           edges: [[0,1],[0,2],[1,3],[1,4],[0,5],[3,6],[4,7],[6,8]],
           info: {
@@ -387,19 +388,19 @@ export function LandingScripts() {
         {
           title: 'China bans rare earth exports',
           nodes: [
-            { id: 'China Rare Earth Ban', x: 0.12, y: 0.40, type: 'event', hop: 0 },
-            { id: 'Rare Earth Prices \u2191', x: 0.30, y: 0.20, type: 'direct', hop: 1 },
-            { id: 'EV Battery Costs \u2191', x: 0.30, y: 0.55, type: 'impact', hop: 1 },
-            { id: 'TSLA margins \u2193', x: 0.50, y: 0.18, type: 'supplier', hop: 2, portfolio: true },
-            { id: 'AAPL production \u2193', x: 0.50, y: 0.42, type: 'supplier', hop: 2, portfolio: true },
-            { id: 'Defense stocks \u2191', x: 0.50, y: 0.68, type: 'related', hop: 2 },
-            { id: 'MP Materials \u2191', x: 0.72, y: 0.30, type: 'indirect', hop: 3 },
-            { id: 'Your: NVDA delays', x: 0.72, y: 0.55, type: 'you', hop: 3, portfolio: true },
-            { id: 'Lynas Mining \u2191', x: 0.88, y: 0.42, type: 'indirect', hop: 3 },
+            { id: mob ? 'China Ban' : 'China Rare Earth Ban', x: 0.12, y: 0.35, type: 'event', hop: 0 },
+            { id: mob ? 'Prices \u2191' : 'Rare Earth Prices \u2191', x: 0.32, y: 0.15, type: 'direct', hop: 1 },
+            { id: mob ? 'EV Costs \u2191' : 'EV Battery Costs \u2191', x: 0.32, y: 0.55, type: 'impact', hop: 1 },
+            { id: mob ? 'TSLA \u2193' : 'TSLA margins \u2193', x: 0.52, y: 0.12, type: 'supplier', hop: 2, portfolio: true },
+            { id: mob ? 'AAPL \u2193' : 'AAPL production \u2193', x: 0.52, y: 0.40, type: 'supplier', hop: 2, portfolio: true },
+            { id: mob ? 'Defense \u2191' : 'Defense stocks \u2191', x: 0.52, y: 0.68, type: 'related', hop: 2 },
+            { id: mob ? 'MP Mtls \u2191' : 'MP Materials \u2191', x: 0.74, y: 0.25, type: 'indirect', hop: 3 },
+            { id: mob ? 'Your: NVDA' : 'Your: NVDA delays', x: 0.74, y: 0.55, type: 'you', hop: 3, portfolio: true },
+            { id: mob ? 'Lynas \u2191' : 'Lynas Mining \u2191', x: 0.90, y: 0.40, type: 'indirect', hop: 3 },
           ],
           edges: [[0,1],[0,2],[1,3],[2,4],[1,5],[3,6],[4,7],[6,8]],
           info: {
-            title: 'China Bans Rare Earth Exports \u2014 Supply Chain Shock',
+            title: mob ? 'China Rare Earth Ban \u2014 Cascade' : 'China Bans Rare Earth Exports \u2014 Supply Chain Shock',
             desc: 'A geopolitical move in China cascades through EV batteries, smartphone production, and chip manufacturing. Your NVDA position faces production delays through TSMC\'s material shortages.',
             path: ['China Ban', 'Rare Earth \u2191', 'Battery Costs \u2191', 'TSMC delays', 'Your: NVDA']
           }
@@ -407,19 +408,19 @@ export function LandingScripts() {
         {
           title: 'Fed raises rates 50bps',
           nodes: [
-            { id: 'Fed +50bps', x: 0.12, y: 0.40, type: 'event', hop: 0 },
-            { id: 'Bond yields \u2191', x: 0.30, y: 0.20, type: 'direct', hop: 1 },
-            { id: 'Growth stocks \u2193', x: 0.30, y: 0.55, type: 'impact', hop: 1 },
-            { id: 'NVDA P/E compression', x: 0.50, y: 0.15, type: 'supplier', hop: 2, portfolio: true },
-            { id: 'Housing starts \u2193', x: 0.50, y: 0.42, type: 'related', hop: 2 },
-            { id: 'USD strengthens', x: 0.50, y: 0.68, type: 'related', hop: 2 },
-            { id: 'AMZN cloud spend \u2193', x: 0.72, y: 0.28, type: 'indirect', hop: 3, portfolio: true },
-            { id: 'EM currencies \u2193', x: 0.72, y: 0.55, type: 'indirect', hop: 3 },
-            { id: 'Your: AAPL intl rev \u2193', x: 0.88, y: 0.42, type: 'you', hop: 3, portfolio: true },
+            { id: 'Fed +50bps', x: 0.12, y: 0.35, type: 'event', hop: 0 },
+            { id: mob ? 'Bonds \u2191' : 'Bond yields \u2191', x: 0.32, y: 0.15, type: 'direct', hop: 1 },
+            { id: mob ? 'Growth \u2193' : 'Growth stocks \u2193', x: 0.32, y: 0.55, type: 'impact', hop: 1 },
+            { id: mob ? 'NVDA P/E \u2193' : 'NVDA P/E compression', x: 0.52, y: 0.10, type: 'supplier', hop: 2, portfolio: true },
+            { id: mob ? 'Housing \u2193' : 'Housing starts \u2193', x: 0.52, y: 0.40, type: 'related', hop: 2 },
+            { id: mob ? 'USD \u2191' : 'USD strengthens', x: 0.52, y: 0.68, type: 'related', hop: 2 },
+            { id: mob ? 'AMZN \u2193' : 'AMZN cloud spend \u2193', x: 0.74, y: 0.22, type: 'indirect', hop: 3, portfolio: true },
+            { id: mob ? 'EM FX \u2193' : 'EM currencies \u2193', x: 0.74, y: 0.55, type: 'indirect', hop: 3 },
+            { id: mob ? 'Your: AAPL' : 'Your: AAPL intl rev \u2193', x: 0.90, y: 0.38, type: 'you', hop: 3, portfolio: true },
           ],
           edges: [[0,1],[0,2],[2,3],[1,4],[1,5],[3,6],[5,7],[7,8]],
           info: {
-            title: 'Fed Raises Rates \u2014 Macro Ripple Effect',
+            title: mob ? 'Fed Rate Hike \u2014 Macro Ripple' : 'Fed Raises Rates \u2014 Macro Ripple Effect',
             desc: 'A rate hike compresses growth stock valuations, strengthens the dollar, and reduces international revenue for your AAPL position \u2014 a connection most retail investors completely miss.',
             path: ['Fed +50bps', 'USD \u2191', 'EM currencies \u2193', 'Int\'l revenue \u2193', 'Your: AAPL']
           }
@@ -436,7 +437,7 @@ export function LandingScripts() {
         const nodes = scenarios[currentScenario].nodes
         nodes.forEach((node, i) => {
           const label = document.createElement('div')
-          label.className = `ripple-node-label ${node.type === 'you' || node.portfolio ? 'portfolio' : ''}`
+          label.className = `ripple-node-label ${node.type === 'you' || node.portfolio ? 'portfolio' : ''} ${node.type === 'event' ? 'event-cue' : ''}`
           label.textContent = node.id
           label.style.left = (node.x * rw) + 'px'
           label.style.top = (node.y * rh) + 'px'
@@ -448,10 +449,17 @@ export function LandingScripts() {
         })
       }
 
+      const rpBefore = document.getElementById('rp-before')
+      const rpAfter = document.getElementById('rp-after')
+      const rpArrow = document.querySelector('.landing-page .ripple-perspective-arrow')
+
       const triggerRipple = (nodeIdx: number) => {
         const scenario = scenarios[currentScenario]
         const node = scenario.nodes[nodeIdx]
         activeNode = nodeIdx
+
+        // Remove pulse cue once user has clicked
+        rippleLabelsEl!.querySelectorAll('.event-cue').forEach(el => el.classList.remove('event-cue'))
 
         rippleWaves.push({
           x: node.x * rw,
@@ -469,6 +477,12 @@ export function LandingScripts() {
           setTimeout(() => {
             revealedHops.add(hopVal)
             updateLabelVisibility()
+            // Transition perspective labels when cascade expands
+            if (hopVal >= 1 && rpBefore && rpAfter && rpArrow) {
+              rpBefore.classList.remove('active')
+              rpAfter.classList.add('active')
+              rpArrow.classList.add('active')
+            }
           }, delay)
           delay += 400
         }
@@ -516,6 +530,13 @@ export function LandingScripts() {
         rippleWaves = []
         buildLabels()
         rippleInfo!.innerHTML = '<span class="ripple-info-tag">Click a node to explore the cascade</span>'
+
+        // Reset perspective labels
+        if (rpBefore && rpAfter && rpArrow) {
+          rpBefore.classList.add('active')
+          rpAfter.classList.remove('active')
+          rpArrow.classList.remove('active')
+        }
 
         document.querySelectorAll('.landing-page .ripple-btn').forEach((btn, i) => {
           btn.classList.toggle('active', i === idx)

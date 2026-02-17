@@ -9,7 +9,6 @@ export function LandingPage() {
 
       {/* Cursor */}
       <div className="cursor-dot" id="cursor-dot" />
-      <div className="cursor-ring" id="cursor-ring" />
 
       {/* Background Graph */}
       <canvas id="bg-graph"></canvas>
@@ -25,14 +24,23 @@ export function LandingPage() {
             <a href="#how-it-works">How It Works</a>
             <a href="#ripple">The Ripple Effect</a>
             <a href="#daily-brief">Daily Brief</a>
-            <a href="#pricing">Pricing</a>
           </div>
           <div className="nav-right">
-            <a href="#" className="nav-link-sign">Sign In</a>
             <a href="/waitlist" className="btn btn-primary btn-nav">Join Waitlist</a>
           </div>
+          <button className="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+            <span /><span /><span />
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      <div className="mobile-menu" id="mobile-menu">
+        <a href="#how-it-works" className="mobile-menu-link">How It Works</a>
+        <a href="#ripple" className="mobile-menu-link">The Ripple Effect</a>
+        <a href="#daily-brief" className="mobile-menu-link">Daily Brief</a>
+        <a href="/waitlist" className="btn btn-primary">Join Waitlist</a>
+      </div>
 
       {/* ============== HERO ============== */}
       <section className="hero" id="hero">
@@ -56,7 +64,7 @@ export function LandingPage() {
 
           <div className="hero-actions" data-reveal="" data-delay="300">
             <a href="/waitlist" className="btn btn-primary btn-large">
-              <span>Join Waitlist — Lock in 40% Off</span>
+              <span>Join the Waitlist</span>
             </a>
             <a href="#ripple" className="btn btn-ghost btn-large">
               <span>See it in action</span>
@@ -215,12 +223,20 @@ export function LandingPage() {
           <div className="section-header" data-reveal="">
             <span className="section-tag">The Ripple Effect</span>
             <h2 className="section-title">The connection your<br />analyst would catch.<br /><em>Now you can too.</em></h2>
-            <p className="section-sub">Click any event node to see how one headline creates cascading effects across your portfolio.</p>
+            <p className="section-sub">Tap any event node to see how one headline creates cascading effects across your portfolio.</p>
+          </div>
+
+          <div className="ripple-perspective" id="ripple-perspective">
+            <span className="ripple-perspective-tag active" id="rp-before">What you see</span>
+            <svg className="ripple-perspective-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <span className="ripple-perspective-tag" id="rp-after">What Hivemind shows you</span>
           </div>
 
           <div className="ripple-stage" data-reveal="">
-            <canvas id="ripple-canvas" className="ripple-canvas"></canvas>
-            <div id="ripple-labels" className="ripple-labels"></div>
+            <div className="ripple-graph-area">
+              <canvas id="ripple-canvas" className="ripple-canvas"></canvas>
+              <div id="ripple-labels" className="ripple-labels"></div>
+            </div>
             <div id="ripple-info" className="ripple-info">
               <div className="ripple-info-inner" id="ripple-info-inner">
                 <span className="ripple-info-tag">Click a node to explore</span>
@@ -340,122 +356,6 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* ============== COMPARISON ============== */}
-      <section className="comparison-section">
-        <div className="landing-container">
-          <div className="section-header" data-reveal="">
-            <span className="section-tag">Why Hivemind</span>
-            <h2 className="section-title">Institutional intelligence.<br /><em>Individual price.</em></h2>
-          </div>
-          <div className="comparison-table" data-reveal="">
-            <div className="comp-header">
-              <div className="comp-cell comp-feature"></div>
-              <div className="comp-cell comp-them">Free Tools</div>
-              <div className="comp-cell comp-bloomberg">Bloomberg</div>
-              <div className="comp-cell comp-us">Hivemind</div>
-            </div>
-            <div className="comp-row">
-              <div className="comp-cell comp-feature">Portfolio-specific insights</div>
-              <div className="comp-cell comp-them"><span className="comp-no">&times;</span></div>
-              <div className="comp-cell comp-bloomberg"><span className="comp-yes">&#10003;</span></div>
-              <div className="comp-cell comp-us"><span className="comp-yes">&#10003;</span></div>
-            </div>
-            <div className="comp-row">
-              <div className="comp-cell comp-feature">Multi-hop relationship mapping</div>
-              <div className="comp-cell comp-them"><span className="comp-no">&times;</span></div>
-              <div className="comp-cell comp-bloomberg"><span className="comp-partial">~</span></div>
-              <div className="comp-cell comp-us"><span className="comp-yes">&#10003;</span></div>
-            </div>
-            <div className="comp-row">
-              <div className="comp-cell comp-feature">Daily personalized brief</div>
-              <div className="comp-cell comp-them"><span className="comp-no">&times;</span></div>
-              <div className="comp-cell comp-bloomberg"><span className="comp-no">&times;</span></div>
-              <div className="comp-cell comp-us"><span className="comp-yes">&#10003;</span></div>
-            </div>
-            <div className="comp-row">
-              <div className="comp-cell comp-feature">Supply chain visibility</div>
-              <div className="comp-cell comp-them"><span className="comp-no">&times;</span></div>
-              <div className="comp-cell comp-bloomberg"><span className="comp-yes">&#10003;</span></div>
-              <div className="comp-cell comp-us"><span className="comp-yes">&#10003;</span></div>
-            </div>
-            <div className="comp-row">
-              <div className="comp-cell comp-feature">Built for retail investors</div>
-              <div className="comp-cell comp-them"><span className="comp-yes">&#10003;</span></div>
-              <div className="comp-cell comp-bloomberg"><span className="comp-no">&times;</span></div>
-              <div className="comp-cell comp-us"><span className="comp-yes">&#10003;</span></div>
-            </div>
-            <div className="comp-row comp-row-price">
-              <div className="comp-cell comp-feature">Price</div>
-              <div className="comp-cell comp-them">$0</div>
-              <div className="comp-cell comp-bloomberg">$24,000/yr</div>
-              <div className="comp-cell comp-us"><strong>$29/mo</strong></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============== PRICING ============== */}
-      <section className="pricing" id="pricing">
-        <div className="landing-container">
-          <div className="section-header" data-reveal="">
-            <span className="section-tag">Pricing</span>
-            <h2 className="section-title">Start free.<br /><em>Upgrade when you&apos;re hooked.</em></h2>
-          </div>
-
-          <div className="pricing-grid">
-            <div className="pricing-card" data-reveal="">
-              <div className="pricing-tier">Free</div>
-              <div className="pricing-price">$0</div>
-              <div className="pricing-desc">Get a taste of connected intelligence.</div>
-              <ul className="pricing-list">
-                <li>Track up to 3 stocks</li>
-                <li>Weekly portfolio brief</li>
-                <li>1-hop relationship mapping</li>
-                <li>Basic news aggregation</li>
-              </ul>
-              <a href="/waitlist" className="btn btn-ghost btn-full">Join Waitlist</a>
-              <div className="pricing-note">No credit card required</div>
-            </div>
-
-            <div className="pricing-card pricing-featured" data-reveal="" data-delay="100">
-              <div className="pricing-popular">MOST POPULAR</div>
-              <div className="pricing-tier">Pro</div>
-              <div className="pricing-price">$29<span>/mo</span></div>
-              <div className="pricing-desc">Full portfolio intelligence, daily.</div>
-              <ul className="pricing-list">
-                <li>Unlimited stocks</li>
-                <li>Daily personalized brief</li>
-                <li>3-hop deep relationship mapping</li>
-                <li>Supply chain &amp; regulatory tracking</li>
-                <li>Real-time alert triggers</li>
-                <li>Earnings impact forecasting</li>
-              </ul>
-              <a href="/waitlist" className="btn btn-primary btn-full">Join Waitlist — Early Bird</a>
-              <div className="pricing-note">Cancel anytime</div>
-            </div>
-
-            <div className="pricing-card" data-reveal="" data-delay="200">
-              <div className="pricing-tier">Annual</div>
-              <div className="pricing-price">$19<span>/mo</span></div>
-              <div className="pricing-desc">Everything in Pro. Billed annually.</div>
-              <ul className="pricing-list">
-                <li>Everything in Pro</li>
-                <li>Save 34% vs monthly</li>
-                <li>Priority feature access</li>
-                <li>Export briefs to PDF</li>
-                <li>API access (coming soon)</li>
-              </ul>
-              <a href="/waitlist" className="btn btn-ghost btn-full">Join Waitlist</a>
-              <div className="pricing-note">$228/yr — save $120</div>
-            </div>
-          </div>
-
-          <div className="pricing-faq" data-reveal="">
-            <p className="pricing-disclaimer">Hivemind is a portfolio intelligence tool. We help you understand what&apos;s happening — not what to do about it. This is not investment advice.</p>
-          </div>
-        </div>
-      </section>
-
       {/* ============== CTA ============== */}
       <section className="cta-section">
         <div className="landing-container">
@@ -464,7 +364,7 @@ export function LandingPage() {
             <h2>Institutions have teams of analysts<br />connecting these dots.</h2>
             <p className="cta-sub"><em>You have Hivemind.</em></p>
             <a href="/waitlist" className="btn btn-primary btn-large">Join the Waitlist</a>
-            <p className="cta-note">Early bird members get 40% off Pro — forever.</p>
+            <p className="cta-note">Be first in line when we launch.</p>
           </div>
         </div>
       </section>
@@ -480,7 +380,7 @@ export function LandingPage() {
               </span>
               <p>Portfolio intelligence for the individual investor. See the connections Wall Street sees.</p>
             </div>
-            <div className="footer-col"><h4>Product</h4><a href="#">Features</a><a href="#">Pricing</a><a href="#">Changelog</a><a href="#">Roadmap</a></div>
+            <div className="footer-col"><h4>Product</h4><a href="#">Features</a><a href="#">Changelog</a><a href="#">Roadmap</a></div>
             <div className="footer-col"><h4>Resources</h4><a href="#">How It Works</a><a href="#">Blog</a><a href="#">Case Studies</a><a href="#">FAQ</a></div>
             <div className="footer-col"><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Disclaimers</a><a href="#">Security</a></div>
           </div>
